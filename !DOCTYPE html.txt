@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentação de Resultados Financeiros</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for Inter font and general body styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        /* Ensure responsive layout for the main container */
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        /* Custom styles for shadow and rounded corners on elements */
+        .card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .input-field, .submit-button {
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+    </style>
+</head>
+<body>
+    <div class="container bg-white p-8 rounded-xl card text-center">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Apresentação de Resultados</h1>
+
+        <div class="mb-6">
+            <label for="financialResult" class="block text-gray-700 text-lg font-semibold mb-2">
+                Insira o Resultado Financeiro (Ex: 1234567.89 ou -50000):
+            </label>
+            <input
+                type="number"
+                id="financialResult"
+                placeholder="Ex: 1.250.000,00"
+                class="input-field w-full px-5 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-lg"
+            >
+            <p id="inputError" class="text-red-600 text-sm mt-2 hidden">Por favor, insira um número válido.</p>
+        </div>
+
+        <button
+            id="presentButton"
+            class="submit-button bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 text-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+            Apresentar Resultado
+        </button>
+
+        <div id="resultDisplay" class="mt-8 p-6 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hidden">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Resultado Financeiro:</h2>
+            <p id="displayedResult" class="text-5xl font-extrabold text-gray-900"></p>
+            <p id="resultStatus" class="text-xl font-semibold mt-2"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const financialResultInput = document.getElementById('financialResult');
+            const presentButton = document.getElementById('presentButton');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const displayedResult = document.getElementById('displayedResult');
+            const resultStatus = document.getElementById('resultStatus');
+            const inputError = document.getElementById('inputError');
+
+            presentButton.addEventListener('click', () => {
+                const inputValue = financialResultInput.value;
+                const numericValue = parseFloat(inputValue);
+
+                // Input validation
+                if (isNaN(numericValue) || inputValue.trim() === '') {
+                    inputError.classList.remove('hidden');
+                    resultDisplay.classList.add('hidden');
+                    return;
+                } else {
+                    inputError.classList.add('hidden');
+                }
+
+                // Format the number as currency (Brazilian Real)
+                const formattedResult = new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(numericValue);
+
+                displayedResult.textContent = formattedResult;
+
+                // Determine status (Profit/Loss) and apply color
+                if (numericValue >= 0) {
+                    displayedResult.classList.remove('text-red-600');
+                    displayedResult.classList.add('text-green-600');
+                    resultStatus.textContent = 'Lucro';
+                    resultStatus.classList.remove('text-red-600');
+                    resultStatus.classList.add('text-green-600');
+                } else {
+                    displayedResult.classList.remove('text-green-600');
+                    displayedResult.classList.add('text-red-600');
+                    resultStatus.textContent = 'Prejuízo';
+                    resultStatus.classList.remove('text-green-600');
+                    resultStatus.classList.add('text-red-600');
+                }
+
+                resultDisplay.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
